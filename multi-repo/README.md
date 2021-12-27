@@ -14,18 +14,18 @@ You can add these in your `.gitpod.yml` for testing
 ```yml
 tasks:
   - init: |
-      curl -L https://git.io/Jy8jV | bash -s -- \
+      curl -L https://git.io/Jy44e | bash -s -- \
       "https://github.com/bashbox/bashbox" \
       "https://github.com/bashbox/std+open"
 ```
 
-- Setup two sub-repos from three specified repos but **use one of them to replace your base repository.**
+- Setup two sub-repos from within three specified repos but **use one of them to replace your base repository.**
 > Notice the `+base` at the end of the 2nd github url.
 
 ```yml
 tasks:
   - init: |
-      curl -L https://git.io/Jy8jV | bash -s -- \
+      curl -L https://git.io/Jy44e | bash -s -- \
       "https://github.com/bashbox/bashbox" \
       "https://github.com/bashbox/std+base" \
       "https://github.com/axonasif/gearlock.git"
