@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-main@bashbox%3053 () 
+main@bashbox%18569 () 
 { 
     function process::self::exit () 
     { 
@@ -50,7 +50,7 @@ main@bashbox%3053 ()
     shopt -s inherit_errexit expand_aliases;
     ___self="$0";
     ___self_PID="$$";
-    ___MAIN_FUNCNAME="main@bashbox%3053";
+    ___MAIN_FUNCNAME="main@bashbox%18569";
     ___self_NAME="multi-repo";
     ___self_CODENAME="multi-repo";
     ___self_AUTHORS=("AXON <axonasif@gmail.com>");
@@ -77,27 +77,43 @@ main@bashbox%3053 ()
         local _repos_name='repos';
         local _gitmodules_name='.gitmodules';
         local _gitignore_name='.gitignore';
+        local _base_dir="$PWD";
         local _repo _task;
         for _repo in "${_multi_repo_list[@]}";
         do
             { 
                 IFS='+' read -r _repo _task <<< "${_repo%.git}" && : "${_task:="none"}";
                 local _repo_name="${_repo##*/}" && _repo_name="${_repo_name}";
+                local _repo_dir="$_base_dir/$_repos_name/$_repo_name";
                 ( log::info "Setting up $_repo ...";
-                git clone --depth=1 "$_repo" "$PWD/$_repos_name/$_repo_name" && { 
-                    printf '%s\n' "[submodule \"${_repo_name}\"]" "	path = ${_repos_name}/${_repo_name}" "	url = ${_repo}.git" >> "$PWD/${_gitmodules_name}"
+                git clone --depth=1 "$_repo" "$_repo_dir" && { 
+                    if test "$_task" != "base"; then
+                        { 
+                            printf '%s\n' "[submodule \"${_repo_name}\"]" "	path = ${_repos_name}/${_repo_name}" "	url = ${_repo}.git" >> "$_base_dir/${_gitmodules_name}"
+                        };
+                    fi
                 };
                 if test "$_task" == "open"; then
                     { 
                         log::info "Launching $_repo_name in a separate VSCODE instance";
-                        code "$PWD/${_repos_name}/${_repo_name}"
+                        code "$_base_dir/${_repos_name}/${_repo_name}"
                     };
-                fi ) & wait
+                else
+                    if test "$_task" == "base"; then
+                        { 
+                            log::info "Using $_repo_name as base repository";
+                            rm -rf "$_base_dir/.git" && mv "$_repo_dir/.git" "$_base_dir/";
+                            git -C "$_base_dir" reset --hard;
+                            rm -rf "$_repo_dir"
+                        };
+                    fi;
+                fi ) &
             };
         done;
-        printf '%s\n' "/${_repos_name}/" "/${_gitmodules_name}" >> "$PWD/${_gitignore_name}"
+        wait;
+        printf '%s\n' "/${_repos_name}/" "/${_gitmodules_name}" >> "$_base_dir/${_gitignore_name}"
     };
     main "$@";
     exit
 }
-main@bashbox%3053 "$@";
+main@bashbox%18569 "$@";
