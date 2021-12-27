@@ -14,7 +14,7 @@ You can add these in your `.gitpod.yml` for testing
 ```yml
 tasks:
   - init: |
-      curl -L https://git.io/Jy44e | bash -s -- \
+      curl -sL https://git.io/Jy44e | bash -s -- \
       "https://github.com/bashbox/bashbox" \
       "https://github.com/bashbox/std+open"
 ```
@@ -25,7 +25,7 @@ tasks:
 ```yml
 tasks:
   - init: |
-      curl -L https://git.io/Jy44e | bash -s -- \
+      curl -sL https://git.io/Jy44e | bash -s -- \
       "https://github.com/bashbox/bashbox" \
       "https://github.com/bashbox/std+base" \
       "https://github.com/axonasif/gearlock.git"
