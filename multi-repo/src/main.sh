@@ -9,6 +9,10 @@ function main() {
 	local _hook_script="$HOME/.bashrc.d/multi-repo";
 	local _repo _task;
 
+	if test -e "$_base_dir/$_repos_name/.init"; then {
+		return 0;
+	} fi
+
     for _repo in "${_multi_repo_list[@]}"; do {
 		IFS='+' read -r _repo _task <<<"${_repo%.git}" && : "${_task:="none"}";
         local _repo_name="${_repo##*/}" && _repo_name="${_repo_name}";
@@ -47,5 +51,7 @@ function main() {
 
     # Make git ignore the `repos/` and `.gitmodules` dir
     printf '%s\n' "/${_repos_name}/" "/${_gitmodules_name}" >> "$_base_dir/${_gitignore_name}";
+
+	touch "$_base_dir/$_repos_name/.init";
 }
 
