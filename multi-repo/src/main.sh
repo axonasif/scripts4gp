@@ -6,6 +6,7 @@ function main() {
     local _gitmodules_name='.gitmodules';
     local _gitignore_name='.gitignore';
 	local _base_dir="$PWD";
+	local _hook_script="$HOME/.bashrc.d/multi-repo";
 	local _repo _task;
 
     for _repo in "${_multi_repo_list[@]}"; do {
@@ -25,8 +26,8 @@ function main() {
 			}
 
 			if test "$_task" == "open"; then {
-				log::info "Launching $_repo_name in a separate VSCODE instance";
-				code "$_base_dir/${_repos_name}/${_repo_name}";
+				log::info "Hooking $_repo_name in a separate VSCODE instance";
+				printf '%s\n' "code $_repo_dir" >> "$_hook_script";
 			} elif test "$_task" == "base"; then {
 				log::info "Using $_repo_name as base repository";
 				rm -rf "$_base_dir/.git" && mv "$_repo_dir/.git" "$_base_dir/";
@@ -39,6 +40,10 @@ function main() {
     } done
 
 	wait;
+
+	if test -e "$_hook_script"; then {
+		printf '%s\n' "rm $_hook_script" >> "$_hook_script";
+	} fi
 
     # Make git ignore the `repos/` and `.gitmodules` dir
     printf '%s\n' "/${_repos_name}/" "/${_gitmodules_name}" >> "$_base_dir/${_gitignore_name}";

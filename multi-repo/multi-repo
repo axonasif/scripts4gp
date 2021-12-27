@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-main@bashbox%18569 () 
+main@bashbox%13455 () 
 { 
     function process::self::exit () 
     { 
@@ -50,7 +50,7 @@ main@bashbox%18569 ()
     shopt -s inherit_errexit expand_aliases;
     ___self="$0";
     ___self_PID="$$";
-    ___MAIN_FUNCNAME="main@bashbox%18569";
+    ___MAIN_FUNCNAME="main@bashbox%13455";
     ___self_NAME="multi-repo";
     ___self_CODENAME="multi-repo";
     ___self_AUTHORS=("AXON <axonasif@gmail.com>");
@@ -78,6 +78,7 @@ main@bashbox%18569 ()
         local _gitmodules_name='.gitmodules';
         local _gitignore_name='.gitignore';
         local _base_dir="$PWD";
+        local _hook_script="$HOME/.bashrc.d/multi-repo";
         local _repo _task;
         for _repo in "${_multi_repo_list[@]}";
         do
@@ -95,8 +96,8 @@ main@bashbox%18569 ()
                 };
                 if test "$_task" == "open"; then
                     { 
-                        log::info "Launching $_repo_name in a separate VSCODE instance";
-                        code "$_base_dir/${_repos_name}/${_repo_name}"
+                        log::info "Hooking $_repo_name in a separate VSCODE instance";
+                        printf '%s\n' "code $_repo_dir" >> "$_hook_script"
                     };
                 else
                     if test "$_task" == "base"; then
@@ -111,9 +112,14 @@ main@bashbox%18569 ()
             };
         done;
         wait;
+        if test -e "$_hook_script"; then
+            { 
+                printf '%s\n' "rm $_hook_script" >> "$_hook_script"
+            };
+        fi;
         printf '%s\n' "/${_repos_name}/" "/${_gitmodules_name}" >> "$_base_dir/${_gitignore_name}"
     };
     main "$@";
     exit
 }
-main@bashbox%18569 "$@";
+main@bashbox%13455 "$@";
