@@ -1,0 +1,103 @@
+#!/usr/bin/env bash
+main@bashbox%3053 () 
+{ 
+    function process::self::exit () 
+    { 
+        local _r=$?;
+        kill -USR1 "$___self_PID";
+        exit $_r
+    };
+    function process::self::forcekill () 
+    { 
+        exec 2> /dev/null;
+        kill -9 "$___self_PID"
+    };
+    function log::error () 
+    { 
+        local _retcode="${2:-$?}";
+        local _exception_line="$1";
+        local _source="${BB_ERR_SOURCE:-"${BASH_SOURCE[-1]}"}";
+        if [[ ! "$_exception_line" == "("*")" ]]; then
+            { 
+                echo -e "[!!!] \033[1;31merror\033[0m[$_retcode]: ${_source##*/}[$BASH_LINENO]: ${BB_ERR_MSG:-"$_exception_line"}" 1>&2;
+                if test -v BB_ERR_MSG; then
+                    { 
+                        echo -e "STACK TRACE: (TOKEN: $_exception_line)" 1>&2;
+                        local -i _frame=0;
+                        local _treestack='|--';
+                        local _line _caller _source;
+                        while read -r _line _caller _source < <(caller "$_frame"); do
+                            { 
+                                echo "$_treestack ${_caller} >> ${_source##*/}::${_line}" 1>&2;
+                                _frame+=1;
+                                _treestack+='--'
+                            };
+                        done
+                    };
+                fi
+            };
+        else
+            { 
+                echo -e "[!!!] \033[1;31merror\033[0m[$_retcode]: ${_source##*/}[$BASH_LINENO]: SUBSHELL EXITED WITH NON-ZERO STATUS" 1>&2
+            };
+        fi;
+        return "$_retcode"
+    };
+    \command \unalias -a || exit;
+    trap 'exit' USR1;
+    trap 'BB_ERR_MSG="UNCAUGHT EXCEPTION" log::error "$BASH_COMMAND" || process::self::exit' ERR;
+    set -eEuT -o pipefail;
+    shopt -s inherit_errexit expand_aliases;
+    ___self="$0";
+    ___self_PID="$$";
+    ___MAIN_FUNCNAME="main@bashbox%3053";
+    ___self_NAME="multi-repo";
+    ___self_CODENAME="multi-repo";
+    ___self_AUTHORS=("AXON <axonasif@gmail.com>");
+    ___self_VERSION="1.0";
+    ___self_DEPENDENCIES=(std::0.2.0);
+    ___self_REPOSITORY="";
+    ___self_BASHBOX_COMPAT="0.3.7~";
+    function bashbox_after_build () 
+    { 
+        cp "$_target_workfile" "$_arg_path/$CODENAME";
+        chmod +x "$_arg_path/$CODENAME"
+    };
+    function log::info () 
+    { 
+        echo -e "[%%%] \033[1;37minfo\033[0m: $@"
+    };
+    function log::warn () 
+    { 
+        echo -e "[***] \033[1;37mwarn\033[0m: $@"
+    };
+    function main () 
+    { 
+        local _multi_repo_list=("${@}");
+        local _repos_name='repos';
+        local _gitmodules_name='.gitmodules';
+        local _gitignore_name='.gitignore';
+        local _repo _task;
+        for _repo in "${_multi_repo_list[@]}";
+        do
+            { 
+                IFS='+' read -r _repo _task <<< "${_repo%.git}" && : "${_task:="none"}";
+                local _repo_name="${_repo##*/}" && _repo_name="${_repo_name}";
+                ( log::info "Setting up $_repo ...";
+                git clone --depth=1 "$_repo" "$PWD/$_repos_name/$_repo_name" && { 
+                    printf '%s\n' "[submodule \"${_repo_name}\"]" "	path = ${_repos_name}/${_repo_name}" "	url = ${_repo}.git" >> "$PWD/${_gitmodules_name}"
+                };
+                if test "$_task" == "open"; then
+                    { 
+                        log::info "Launching $_repo_name in a separate VSCODE instance";
+                        code "$PWD/${_repos_name}/${_repo_name}"
+                    };
+                fi ) & wait
+            };
+        done;
+        printf '%s\n' "/${_repos_name}/" "/${_gitmodules_name}" >> "$PWD/${_gitignore_name}"
+    };
+    main "$@";
+    exit
+}
+main@bashbox%3053 "$@";
