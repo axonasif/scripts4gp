@@ -14,7 +14,7 @@ You can add these in your `.gitpod.yml` for trying out. Try running `gp init` in
 ```yml
 tasks:
   - before: |
-      curl -sL https://git.io/multi-repo | bash -s -- \
+      curl -sL https://git.io/Jy44e | bash -s -- \
       "https://github.com/bashbox/bashbox" \
       "https://github.com/bashbox/std+open"
 ```
@@ -25,7 +25,7 @@ tasks:
 ```yml
 tasks:
   - before: |
-      curl -sL https://git.io/multi-repo | bash -s -- \
+      curl -sL https://git.io/Jy44e | bash -s -- \
       "https://github.com/bashbox/bashbox" \
       "https://github.com/bashbox/std+base" \
       "https://github.com/axonasif/gearlock.git"
