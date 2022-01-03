@@ -31,4 +31,4 @@ tasks:
       "https://github.com/axonasif/gearlock.git"
 ```
 
-> **Important note:** Make sure to push commit and push the changes of your `.gitpod.yml` file and open a new workspace for your repository. 
+> **Important note:** Make sure to commit and push the changes of your `.gitpod.yml` file and open a new workspace for your repository to see it work.
