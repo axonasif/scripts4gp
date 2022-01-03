@@ -6,7 +6,7 @@ It also tries to mimic the git-submodules behavior in VSCODE `Source Control` pa
 
 ## Examples
 
-You can add these in your `.gitpod.yml` for testing
+You can add these in your `.gitpod.yml` for trying out. Try running `gp init` in your workspace if you don't have this file.
 
 - Setup two sub-repos in your existing repo and **launch one of them in a separate VSCODE instance.**
 > Notice the `+open` at the end of last github url.
@@ -30,3 +30,5 @@ tasks:
       "https://github.com/bashbox/std+base" \
       "https://github.com/axonasif/gearlock.git"
 ```
+
+> **Important note:** Make sure to push commit and push the changes of your `.gitpod.yml` file and open a new workspace for your repository. 
